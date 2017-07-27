@@ -14,8 +14,8 @@ http.createServer(function(req,res){
 		res.end(json);
 	}else {
 		res.end(JSON.stringify(getDetail(route)));
-	}	
-}).listen(8080);
+	}
+}).listen(8090);
 
 function getServices(){
 	return ["meteo","accomodation","event","environment"]
