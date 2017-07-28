@@ -3,15 +3,15 @@ const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testha
 
 const pool = new Pool({
   user: 'postgres',
-  host: 'localhost:5432/geobank',
+  host: 'localhost',
   database: 'geobank',
   password: 'testhallo',
   port: 5432,
-})
+});
 
 pool.query(
     'CREATE TABLE geobank(id SERIAL PRIMARY KEY, data JSONB)' , (err, res) => {
-    console.log("finito");
+    console.log(err, res);
     pool.end();
   });
 
