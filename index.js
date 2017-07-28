@@ -7,11 +7,25 @@ var url = require('url');
 http.createServer(function(req,res){
 	var route = url.parse(req.url).pathname.replace("/","");
 	res.writeHead(200, {'Content-Type': 'application/json'});
-	console.log(route);
+	//console.log(route);
 	if (route.length === 0){
-		var services = getServices();
-		var json = JSON.stringify(services);
-		res.end(json);
+		// var services = getServices();
+		// var json = JSON.stringify(services);
+		// res.end(json);
+
+		var myresult = 	db.selectListfromGeobankTable(callback);
+
+		function callback(data,err){
+
+			if(err)
+			{
+				console.log(err);
+				res.end(JSON.stringify(err))
+			}
+			else
+		  	res.end(JSON.stringify(data));
+		}
+
 	}
 	else if(route != 'favicon.ico') {
 
@@ -23,7 +37,7 @@ http.createServer(function(req,res){
 			{
 				console.log(err);
 				res.end(JSON.stringify(err))
-			}				
+			}
 			else
 		  	res.end(JSON.stringify(data));
 		}

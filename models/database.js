@@ -20,12 +20,12 @@ const pool = new Pool({
 //Create Object Array for Table
 function getGeobankObjectArray(){
   var mytypes = [];
-  mytypes.push({ identifier:'meteo', data: '{ "name":"meteo", "url":"http://service.suedtirol.info/api/Weather" }' })
-  mytypes.push({ identifier:'accommodation', data: '{ "name":"accommodation", "url":"http://service.suedtirol.info/api/Accommodation" }' })
-  mytypes.push({ identifier:'event', data: '{ "name":"event", "url":"http://service.suedtirol.info/api/Event"}' })
-  mytypes.push({ identifier:'gastronomy', data: '{ "name":"gastronomy", "url":"http://service.suedtirol.info/api/Gastronomy"}' })
-  mytypes.push({ identifier:'activity', data: '{ "name":"activity", "url":"http://service.suedtirol.info/api/Activity"}' })
-  mytypes.push({ identifier:'poi', data: '{ "name":"poi", "url":"http://service.suedtirol.info/api/Poi"}' })
+  mytypes.push({ identifier:'meteo', data: '[ { "origin":"Siag", "url":"http://service.suedtirol.info/api/Weather", "doc":"http://service.suedtirol.info/help" }, { "name":"meteotis", "origin":"TIS", "url":"http://hallo.com", "doc":"http://koanohnung.net" } ]' })
+  mytypes.push({ identifier:'accommodation', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Accommodation", "doc":"http://service.suedtirol.info/help" } ]' })
+  mytypes.push({ identifier:'event', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Eventi", "doc":"http://service.suedtirol.info/help" } ]' })
+  mytypes.push({ identifier:'gastronomy', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Gastronomy", "doc":"http://service.suedtirol.info/help" } ]' })
+  mytypes.push({ identifier:'activity', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Activity" , "doc":"http://service.suedtirol.info/help"} ]' })
+  mytypes.push({ identifier:'poi', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Poi" , "doc":"http://service.suedtirol.info/help"} ]' })
 
   return mytypes;
 };
@@ -85,7 +85,6 @@ exports.selectFromGeobankTable = function(identifier, callback){
 
    pool.query(
     'SELECT data FROM geobank WHERE identifier = $1', [ identifier ] , (err, res) => {
-      pool.end();
       if (err) {
           callback(null, err);
         }
@@ -95,6 +94,8 @@ exports.selectFromGeobankTable = function(identifier, callback){
         callback(null, "nothing");
       }
   });
+
+  //pool.end();
 
   // pool.connect((err, client, release) => {
   //   if (err) {
@@ -109,7 +110,26 @@ exports.selectFromGeobankTable = function(identifier, callback){
   //
   //     callback(result.rows[0].data);
   //   });
-  //   pool.end();
   // });
 
+};
+
+//SELECT FROM TABLE
+exports.selectListfromGeobankTable = function(callback){
+
+  console.log("Selecting ALL");
+
+   pool.query(
+    'SELECT identifier as datatype,data as services FROM geobank' , (err, res) => {
+      if (err) {
+          callback(null, err);
+        }
+      if(res.rows.length > 0)
+           callback(res.rows);
+      else {
+        callback(null, "nothing");
+      }
+  });
+
+  //pool.end();
 };
