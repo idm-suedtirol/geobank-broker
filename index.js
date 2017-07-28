@@ -15,28 +15,24 @@ http.createServer(function(req,res){
 	}
 	else if(route != 'favicon.ico') {
 
-		var myresult = getDetail(route);
-		console.log(myresult);
+		var myresult = 	db.selectFromGeobankTable(route, callback);
+
+		function callback(data,err){
+
+			if(err)
+			{
+				console.log(err);
+				res.end(JSON.stringify(err))
+			}				
+			else
+		  	res.end(JSON.stringify(data));
+		}
 
 		//res.end(JSON.stringify(getDetail(route)));
-		res.end(myresult);
+
 	}
 }).listen(8090);
 
 function getServices(){
 	return ["meteo","accomodation","event","environment"]
-}
-function getDetail(service){
-
-	var result = db.selectSingle(service);
-
-	return result;
-
-	// if (service === "meteo"){
-	// 	return {
-	// 		id:125,
-	// 		formats:["xml","json","jsonp"],
-	// 		url:"http://patrick.ohnewein.nit"
-	// 	}
-	// }
 }

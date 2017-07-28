@@ -15,7 +15,7 @@ const pool = new Pool({
 //fillGeobankTable();
 //updateGeobankTable();
 //selectFromGeobankTable('meteo');
-
+//selectedtest('meteo');
 
 //Create Object Array for Table
 function getGeobankObjectArray(){
@@ -80,29 +80,36 @@ function updateGeobankTable(){
 };
 
 //SELECT FROM TABLE
-function selectFromGeobankTable(identifier){
+exports.selectFromGeobankTable = function(identifier, callback){
   console.log("Selecting:" + identifier);
 
-  pool.query(
+   pool.query(
     'SELECT data FROM geobank WHERE identifier = $1', [ identifier ] , (err, res) => {
       pool.end();
       if (err) {
-          return err;
+          callback(null, err);
         }
-      if(res)
-      {
-        console.log(res.rows[0].data);
-
-        return res.rows[0].data;
+      if(res.rows.length > 0)
+           callback(res.rows[0].data);
+      else {
+        callback(null, "nothing");
       }
-
   });
-};
 
+  // pool.connect((err, client, release) => {
+  //   if (err) {
+  //     return console.log('Error acquiring client', err.stack)
+  //   }
+  //   client.query('SELECT data FROM geobank WHERE identifier = $1', [ identifier ], (err, result) => {
+  //     release();
+  //     if (err) {
+  //       return console.log('Error executing query', err.stack);
+  //     }
+  //     //console.log(result.rows[0].data);
+  //
+  //     callback(result.rows[0].data);
+  //   });
+  //   pool.end();
+  // });
 
-exports.selectSingle = function(identifier){
-
-  var result = selectFromGeobankTable(identifier);
-
-  return result;
 };
