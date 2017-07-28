@@ -28,7 +28,9 @@ function getServices(){
 }
 function getDetail(service){
 
-	return db.selectFromGeobankTable(service);
+	var result = db.selectSingle(service);
+
+	return result;
 
 	// if (service === "meteo"){
 	// 	return {

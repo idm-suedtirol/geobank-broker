@@ -1,5 +1,5 @@
 const { Pool, Client } = require('pg');
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testhallo@localhost:5432/geobank';
+//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testhallo@localhost:5432/geobank';
 
 const pool = new Pool({
   user: 'postgres',
@@ -79,15 +79,13 @@ function updateGeobankTable(){
   pool.end();
 };
 
-//SELECT LIST FROM TABLE
-
 //SELECT FROM TABLE
-exports.selectFromGeobankTable = function(identifier){
+function selectFromGeobankTable(identifier){
   console.log("Selecting:" + identifier);
 
   pool.query(
     'SELECT data FROM geobank WHERE identifier = $1', [ identifier ] , (err, res) => {
-
+      pool.end();
       if (err) {
           return err;
         }
@@ -97,8 +95,14 @@ exports.selectFromGeobankTable = function(identifier){
 
         return res.rows[0].data;
       }
-      //pool.end();
+
   });
+};
 
 
+exports.selectSingle = function(identifier){
+
+  var result = selectFromGeobankTable(identifier);
+
+  return result;
 };
