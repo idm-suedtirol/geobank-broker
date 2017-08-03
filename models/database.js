@@ -2,10 +2,10 @@ const { Pool, Client } = require('pg');
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testhallo@localhost:5432/geobank';
 
 const pool = new Pool({
-  user: 'postgres',
+  user: 'patrick',
   host: 'localhost',
   database: 'geobank',
-  password: 'testhallo',
+  password: '',
   port: 5432,
 });
 
@@ -20,13 +20,25 @@ const pool = new Pool({
 //Create Object Array for Table
 function getGeobankObjectArray(){
   var mytypes = [];
-  mytypes.push({ identifier:'meteo', data: '[ { "origin":"Siag", "url":"http://service.suedtirol.info/api/Weather", "doc":"http://service.suedtirol.info/help" }, { "name":"meteotis", "origin":"TIS", "url":"http://hallo.com", "doc":"http://koanohnung.net" } ]' })
+  mytypes.push({ identifier:'meteo', data: '['+
+    '{ "origin":"Siag", "url":"http://service.suedtirol.info/api/Weather", "doc":"http://service.suedtirol.info/help" },'+
+    '{ "origin":"province BZ", "url":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd", "doc":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd","dataFormats":"json"}'+
+  ']'
+  })
   mytypes.push({ identifier:'accommodation', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Accommodation", "doc":"http://service.suedtirol.info/help" } ]' })
   mytypes.push({ identifier:'event', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Eventi", "doc":"http://service.suedtirol.info/help" } ]' })
   mytypes.push({ identifier:'gastronomy', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Gastronomy", "doc":"http://service.suedtirol.info/help" } ]' })
   mytypes.push({ identifier:'activity', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Activity" , "doc":"http://service.suedtirol.info/help"} ]' })
   mytypes.push({ identifier:'poi', data: '[ { "origin":"LTS", "url":"http://service.suedtirol.info/api/Poi" , "doc":"http://service.suedtirol.info/help"} ]' })
-
+  mytypes.push({ identifier:'environment', data: '[ { "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd"} ]' })
+  mytypes.push({ identifier:'parking', data: '[ { "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd"} ]' })
+  mytypes.push({ identifier:'environment', data: '[ { "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd"} ]' })
+  mytypes.push({ identifier:'traffic', data: '[ '+
+    '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd"},'+
+    '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd"},'+
+    '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd"},'+
+    '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd"}'+
+  ']' })
   return mytypes;
 };
 
