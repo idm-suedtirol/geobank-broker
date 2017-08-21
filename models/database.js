@@ -2,10 +2,10 @@ const { Pool, Client } = require('pg');
 //const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testhallo@localhost:5432/geobank';
 
 const pool = new Pool({
-  user: 'postgres',
+  user: 'hannes',
   host: 'localhost',
   database: 'geobank',
-  password: 'testhallo',
+  password: '',
   port: 5432,
 });
 
@@ -93,6 +93,33 @@ function fillGeobankTable(){
   //pool.end();
 };
 
+function insertIntoGeobankTable(obj, callback){
+    pool.query(
+      'INSERT INTO geobank (identifier,data) VALUES($1,$2)', [ obj.identifier, obj.data] , (err, res) => {
+        if (err) {
+            callback("failure inserting");
+          }
+        else{
+            callback("success inserting");
+        }
+  });
+  pool.end();
+};
+
+function updateGeobankTable(obj, callback){
+    pool.query(
+      'UPDATE geobank SET data = $1 WHERE identifier = $2', [ obj.data, obj.identifier ] , (err, res) => {
+        if (err) {
+            callback("failure updating");
+          }
+        else{
+            callback("success updating");
+        }
+  });
+  pool.end();
+}
+
+
 //UPDATE TABLE
 function updateGeobankTable(){
 
@@ -140,7 +167,6 @@ exports.selectFromGeobankTable = function(identifier, callback){
   //     callback(result.rows[0].data);
   //   });
   // });
-
 };
 
 //SELECT FROM TABLE
@@ -149,7 +175,49 @@ exports.selectListfromGeobankTable = function(callback){
   console.log("Selecting ALL");
 
    pool.query(
-    'SELECT identifier as datatype,data as services FROM geobank' , (err, res) => {
+    'SELECT id as id, identifier as datatype,data as services FROM geobank' , (err, res) => {
+      if (err) {
+          callback(null, err);
+        }
+      if(res.rows.length > 0)
+           callback(res.rows);
+      else {
+        callback(null, "nothing");
+      }
+  });
+
+  //pool.end();
+};
+
+
+
+//SELECT Tags FROM TABLE
+exports.selectTagsfromGeobankTable = function(callback){
+
+  console.log("Selecting TAGS");
+
+   pool.query(
+    "SELECT DISTINCT data->>'tag' as tags FROM geobank" , (err, res) => {
+      if (err) {
+          callback(null, err);
+        }
+      if(res.rows.length > 0)
+           callback(res.rows);
+      else {
+        callback(null, "nothing");
+      }
+  });
+
+  //pool.end();
+};
+
+//SELECT Identifiers from Tags FROM TABLE
+exports.selectIdentifiersFromTagsfromGeobankTable = function(tag,callback){
+
+  console.log("Selecting Identifiers");
+
+   pool.query(
+    "select identifier as endpoint from geobank where data @> '{ \"tag\" : [{ \"tagname\" :\""+ tag +"\"}] }';" ,(err, res) => {
       if (err) {
           callback(null, err);
         }
