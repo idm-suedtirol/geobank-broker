@@ -93,30 +93,47 @@ function fillGeobankTable(){
   //pool.end();
 };
 
-function insertIntoGeobankTable(obj, callback){
+exports.insertIntoGeobankTable = function (identifier, data, callback){
     pool.query(
-      'INSERT INTO geobank (identifier,data) VALUES($1,$2)', [ obj.identifier, obj.data] , (err, res) => {
+      'INSERT INTO geobank (identifier,data) VALUES($1,$2)', [ identifier, data] , (err, res) => {
         if (err) {
+            console.log(err);
             callback("failure inserting");
           }
         else{
+          //console.log(res);
             callback("success inserting");
         }
   });
-  pool.end();
-};
+}
 
-function updateGeobankTable(obj, callback){
+exports.getFromGeobankTable = function (value, callback){
     pool.query(
-      'UPDATE geobank SET data = $1 WHERE identifier = $2', [ obj.data, obj.identifier ] , (err, res) => {
+      'SELECT * FROM geobank WHERE id = $1', [ value ] , (err, res) => {
         if (err) {
-            callback("failure updating");
+          console.log(err);
+            callback("failure getting from db");
           }
-        else{
-            callback("success updating");
+          else{
+          if(res.rows.length > 0)
+            callback(res.rows[0]);
+          else
+            callback(null, "nothing");
         }
   });
-  pool.end();
+}
+
+exports.updateGeobankTable = function(value, data, obj, callback){
+  pool.query(
+    'UPDATE geobank SET identifier = $1, data = $2 WHERE id = $3', [ data, obj, value], (err, res) => {
+      if(err){
+        console.log(err);
+        callback("failure updating");
+      }else{
+        callback("success updating");
+      }
+    }
+  )
 }
 
 
