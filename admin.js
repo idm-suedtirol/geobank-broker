@@ -55,7 +55,7 @@ app.get('/api/delete', function(req, res){
   }
 })
 
-app.post('/process_post', urlencodedParser, function(req, res){
+app.post('/api/postdata', urlencodedParser, function(req, res){
   var x = req.body.tagname.split(";")
   var cont = [];
   for(var i of x){
