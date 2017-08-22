@@ -7,10 +7,10 @@ var urlencodedParser = bodyParser.urlencoded({ extended:false })
 
 app.use(express.static('public'));
 
-app.get('/test', function (req, res) {
+app.get('/admin', function (req, res) {
   // console.log(req.query.id);
   //  if(req.query.id === undefined)
-    res.sendFile(__dirname + "/" + "test.html");
+    res.sendFile(__dirname + "/" + "admin.html");
   // else
   //   res.send(req.query.id);
 })
@@ -22,11 +22,37 @@ app.get('/api/data', function(req, res){
        console.log(err);
        res.end(JSON.stringify(err));
      }else{
-       //res.send(req.query.id);
        res.send(data);
      }
    }
 
+})
+
+app.get('/api/list', function(req, res){
+  var obj = db.selectListfromGeobankTable(callback)
+  function callback(data, err){
+    if(err){
+      console.log(err);
+      res.end(JSON.stringify(err));
+    }else{
+      res.send(data);
+    }
+  }
+})
+
+app.get('/api/delete', function(req, res){
+  console.log(req.query.id);
+  var obj = db.deleteFromTable(req.query.id, callback);
+  function callback(data, err){
+    if(err){
+      console.log(err);
+      res.end(JSON.stringify(err));
+    }else{
+      res.writeHead(301,
+      {Location: 'http://localhost:8090/admin'});
+      res.end();
+    }
+  }
 })
 
 app.post('/process_post', urlencodedParser, function(req, res){
@@ -56,8 +82,9 @@ app.post('/process_post', urlencodedParser, function(req, res){
         console.log(err);
 				res.end(JSON.stringify(err))
       }else{
-        //console.log(response);
-        res.end(JSON.stringify(response));
+        res.writeHead(301,
+        {Location: 'http://localhost:8090/admin'});
+        res.end();
       }
     }
 })

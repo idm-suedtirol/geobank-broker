@@ -136,6 +136,19 @@ exports.updateGeobankTable = function(value, data, obj, callback){
   )
 }
 
+exports.deleteFromTable = function(value, callback){
+  pool.query(
+    'DELETE FROM geobank WHERE id = $1', [ value ], (err, res) => {
+      if(err){
+        console.log(err);
+        calback("failure deleting");
+      }else{
+        callback("success deleting");
+      }
+    }
+  )
+}
+
 
 //UPDATE TABLE
 function updateGeobankTable(){
@@ -194,6 +207,7 @@ exports.selectListfromGeobankTable = function(callback){
    pool.query(
     'SELECT id as id, identifier as datatype,data as services FROM geobank' , (err, res) => {
       if (err) {
+          console.log(err);
           callback(null, err);
         }
       if(res.rows.length > 0)
