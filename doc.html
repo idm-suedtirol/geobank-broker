@@ -1,0 +1,161 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-latest.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="mystyle.css" rel="stylesheet">
+  <script type="text/javascript">
+  function colorChange(element, info){
+    element.style.backgroundColor = info;
+  }
+  function myFunctionOne(element){
+    document.getElementById("endpointText").value = element.innerHTML.replace(/"/g, '');
+    document.getElementById("endpointButton").onclick.apply(document.getElementById("endpointButton"));
+    document.getElementById("endpointDiv").style.backgroundColor = "darkorange";
+    setTimeout("colorChange( document.getElementById('endpointDiv'), 'white')", 1000);
+  }
+  function myFunctionTwo(element){
+    document.getElementById("detailText").value = element.innerHTML.replace(/"/g, '');
+    document.getElementById("detailButton").onclick.apply(document.getElementById("detailButton"));
+    document.getElementById("detailDiv").style.backgroundColor = "darkorange";
+    setTimeout("colorChange( document.getElementById('detailDiv'), 'white')", 1000);
+  }
+  function colorJSON(json, origin){
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      var cls = 'number';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'key';
+        } else {
+          if(origin === "detail"){
+            if(match.indexOf("http") != -1){
+              cls = "string myClickable' onClick='location.href=" + match;
+            }else{
+              cls = "string";
+            }
+          }else{
+            if(origin === "tags"){
+              cls = "string myClickable' onClick='myFunctionOne(this)";
+            }
+            else{
+              cls = "string myClickable' onClick='myFunctionTwo(this)";
+            }
+          }
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'boolean';
+      } else if (/null/.test(match)) {
+        cls = 'null';
+      }
+      return "<span class='" + cls + "'>" + match + '</span>';
+    });
+  }
+  function getJSON(element){
+    if(element.id === "tagsButton"){
+      $.ajax({
+        'url' : 'http://localhost:8090/tag',
+        'type' : 'GET',
+        'success' : function(data) {
+          document.getElementById("tagsPre").innerHTML = colorJSON(data, "tags");
+        },
+        'error' : function(request,error)
+        {
+          alert("Request: "+JSON.stringify(request));
+        }
+      });
+    }else if(element.id === "endpointButton"){
+      $.ajax({
+        'url' : 'http://localhost:8090/tag/'+ document.getElementById("endpointText").value,
+        'type' : 'GET',
+        'success' : function(data) {
+          document.getElementById("endpointsPre").innerHTML = colorJSON(data, "endpoint");
+        },
+        'error' : function(request,error)
+        {
+          alert("Request: "+JSON.stringify(request));
+        }
+      });
+    }else if(element.id === "detailButton"){
+      $.ajax({
+        'url' : 'http://localhost:8090/endpoint/'+ document.getElementById("detailText").value,
+        'type' : 'GET',
+        'success' : function(data) {
+          document.getElementById("detailsPre").innerHTML = colorJSON(data, "detail");
+        },
+        'error' : function(request,error)
+        {
+          alert("Request: "+JSON.stringify(request));
+        }
+      });
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Geobank-Broker Test Interface</h1>
+    <hr>
+    <div class="row" id="tagsDiv">
+      <div class="col-md-6">
+        <h2>Tag Overview</h2>
+        <h3>Description:</h3>
+        <h4>/tag</h4>
+        <p>An overview of the tags. Returns a list of the different tags.</p>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-3 col-md-offset-9">
+            <input type="button" class="btn btn-default myDocButton" id="tagsButton" onClick="getJSON(this);" value="Get Tags">
+          </div>
+        </div>
+        <pre class="myPre" id="tagsPre">
+        </pre>
+      </div>
+    </div>
+    <hr>
+    <div class="row myDiv" id="endpointDiv">
+      <div class="col-md-6">
+        <h2>Endpoints by Tag</h2>
+        <h3>Description:</h3>
+        <h4>/tag/{tagname}</h4>
+        <p>Returns all endpoints for the specified tag.</p>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-9">
+            <input type="text" class="form-control" id="endpointText" onkeydown="if(event.keyCode == 13) document.getElementById('endpointButton').click();" placeholder="tag">
+          </div>
+          <div class="col-md-3">
+            <input type="button" class="btn btn-default myDocButton" id="endpointButton" onClick="getJSON(this);" value="Get Endpoints">
+          </div>
+        </div>
+        <pre class="myPre" id="endpointsPre">
+        </pre>
+      </div>
+    </div>
+    <hr>
+    <div class="row myDiv" id="detailDiv">
+      <div class="col-md-6">
+        <h2>Endpoint Detail</h2>
+        <h3>Description:</h3>
+        <h4>/endpoint/{endpointname}</h4>
+        <p>Displays all details for the specified endpoint.</p>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-9">
+            <input type="text" class="form-control" id="detailText" onkeydown="if(event.keyCode == 13) document.getElementById('detailButton').click();"placeholder="endpoint">
+          </div>
+          <div class="col-md-3">
+            <input type="button" class="btn btn-default myDocButton" id="detailButton" onClick="getJSON(this);" value="Get Detail">
+          </div>
+        </div>
+        <pre class="myPre" id="detailsPre">
+        </pre>
+      </div>
+    </div>
+    <hr>
+  </div>
+</body>
+</html>

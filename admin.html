@@ -1,6 +1,11 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-latest.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="bootstrap/tags/bootstrap-tagsinput.min.js"></script>
+  <link href="bootstrap/tags/bootstrap-tagsinput.css" rel="stylesheet">
+  <link href="mystyle.css" rel="stylesheet">
   <script type="text/javascript">
   function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -72,15 +77,16 @@
       // },
       'success' : function(data) {
         var x = data;
-        document.getElementById("listDiv").innerHTML += "<hr>"
+        //document.getElementById("listDiv").innerHTML += "<hr>"
         for(var i of x){
           var y = i.services.tag;
           var content = "";
           for(var j of y){
-            content += j.tagname + ";";
+            content += j.tagname + "<br>";
           }
-          document.getElementById("listDiv").innerHTML += "<br><p>Datatype: " + i.datatype +"</p><p>Doc: " + i.services.doc + "</p><p>Tagname: " + content + "</p><p>Url: " + i.services.url + "</p><p>Origin: " + i.services.origin + "</p><p>DataFormats: " + i.services.dataFormats +"</p><input type='button' value='Edit' onClick='reload("+ i.id +")'>";
-          document.getElementById("listDiv").innerHTML += "<input type='button' value='Delete' onClick='deleteFunction("+ i.id +")'><br><br><hr>";
+          content = content.substring(0, content.length-4);
+          document.getElementById("mytbody").innerHTML += "<tr><td class='text-center'>" + i.datatype +"</td><td class='text-center'><a href='" + i.services.doc + "'>" + i.services.doc + "</td><td class='text-center'>" + content + "</td><td class='text-center'><a href='" + i.services.url + "'>" + i.services.url + "</td><td class='text-center'>" + i.services.origin +
+          "</td><td class='text-center'>" + i.services.dataFormats +"</td><td class='text-center'><input type='button' value='Edit' class='btn btn-default myButton' onClick='reload("+ i.id +")'></td><td class='text-center'><input type='button' class='btn btn-default myButton align-middle' value='Delete' onClick='deleteFunction("+ i.id +")'></td></tr>";
         }
       },
       'error' : function(request,error)
@@ -89,20 +95,97 @@
       }
     });
   }
+
+  function filterFunction(){
+    var input, filter, tbody, tr, td, i;
+    input = document.getElementById("myFilter");
+    filter = input.value.toUpperCase();
+    tbody = document.getElementById("mytbody");
+    tr = tbody.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+   td = tr[i].getElementsByTagName("td")[2];
+   if (td) {
+     if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+       tr[i].style.display = "";
+     } else {
+       tr[i].style.display = "none";
+     }
+   }
+ }
+  }
   </script>
 </head>
 <body onLoad="fillForm();addList()">
-  <form action = "http://localhost:8090/api/postdata" method = "POST">
-    <input type="hidden" id="hiddenId" name = "hiddenId" value="-1">
-    Datatype: <input type = "text" id = "datatype" name = "datatype"> <br>
-    Doc: <input type = "text" id = "doc" name = "doc"> <br>
-    Tagname: <input type = "text" id = "tagname" name = "tagname"> <br>
-    Url: <input type = "text" id = "url" name = "url"> <br>
-    Origin: <input type = "text" id = "origin" name = "origin"> <br>
-    DataFormats: <input type = "text" id = "dataFormats" name = "dataFormats"> <br>
-    <input type = "submit" value = "Submit">
-  </form>
-  <div id="listDiv">
-    <div>
-    </body>
-    </html>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5 col-centered">
+        <form action="http://localhost:8090/api/postdata" class="form-horizontal" method="POST">
+          <input type="hidden" id="hiddenId" name="hiddenId" value="-1">
+          <div class="form-group">
+            <label class="control-label col-md-3" for="datatype">Datatype:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control" id="datatype" name="datatype" placeholder="datatype">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-3" for="doc">Doc:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control col-md-10" id="doc" name="doc" placeholder="doc">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-3" for="tagname">Tagname:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control col-md-10" id="tagname" name="tagname" data-role="tagsinput">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-3" for="url">Url:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control col-md-10" id="url" name="url" placeholder="url">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-3" for="origin">Origin:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control col-md-10" id="origin" name="origin" placeholder="origin">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-3" for="dataFormats">DataFormats:</label>
+            <div class="col-md-9">
+              <input type="text" class="form-control col-md-10" id="dataFormats" name="dataFormats" placeholder="dataFormats">
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-default mySubmitButton">
+            <input type="button" value="Clear" class="btn btn-default mySubmitButton" onClick="location.href='http://localhost:8090/admin'">
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="filterDiv col-md-5 col-centered">
+      <input type="text" id="myFilter" class="form-control" onkeyup="filterFunction();" placeholder="Search by tagname...">
+    </div>
+      <table class="table table-striped" id="myTable">
+        <thead>
+          <tr>
+            <th class="text-center">Datatype</th>
+            <th class="text-center">Doc</th>
+            <th class="text-center">Tagname</th>
+            <th class="text-center">Url</th>
+            <th class="text-center">Origin</th>
+            <th class="text-center">DataFormats</th>
+            <th class="text-center">Edit</th>
+            <th class="text-center">Delete</th>
+          </tr>
+        </thead>
+        <tbody id="mytbody">
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

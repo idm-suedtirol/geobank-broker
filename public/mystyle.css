@@ -1,0 +1,61 @@
+.myButton{
+  height: 50px;
+  width: 70px;
+}
+.col-centered{
+  float: none;
+  margin: 50px auto;
+}
+.mySubmitButton{
+  float: right;
+  margin-right: 16px
+}
+.bootstrap-tagsinput{
+  width: 334px;
+}
+td{
+  vertical-align: middle !important;
+}
+.myDocButton{
+  width: 100%;
+}
+.myCol-centered{
+  float: none;
+  margin: 0 auto;
+}
+.myPre{
+  margin: 10px 0px;
+  height: 300px;
+}
+pre{
+  outline: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px;
+}
+.string{
+  color: green;
+}
+.number{
+  color: darkorange;
+}
+.boolean{
+  color: blue;
+}
+.null{
+  color: magenta;
+}
+.key{
+  color: red;
+}
+.myClickable:hover{
+  cursor: ponter !important;
+  cursor: hand;
+}
+.myDiv{
+  -webkit-transition-property: background-color;
+	-webkit-transition-duration: 200ms;
+	-moz-transition-property: background-color;
+	-mmoz-transition-duration: 200ms;
+	transition-property: background-color;
+	transition-duration: 200ms;
+}
