@@ -12,12 +12,14 @@
     document.getElementById("endpointText").value = element.innerHTML.replace(/"/g, '');
     document.getElementById("endpointButton").onclick.apply(document.getElementById("endpointButton"));
     document.getElementById("endpointDiv").style.backgroundColor = "darkorange";
+    window.location.hash = "#endpointDiv";
     setTimeout("colorChange( document.getElementById('endpointDiv'), 'white')", 1000);
   }
   function myFunctionTwo(element){
     document.getElementById("detailText").value = element.innerHTML.replace(/"/g, '');
     document.getElementById("detailButton").onclick.apply(document.getElementById("detailButton"));
     document.getElementById("detailDiv").style.backgroundColor = "darkorange";
+    window.location.hash = "#detailDiv";
     setTimeout("colorChange( document.getElementById('detailDiv'), 'white')", 1000);
   }
   function colorJSON(json, origin){
@@ -91,6 +93,7 @@
     }
   }
   </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
   <div class="container">
@@ -114,7 +117,7 @@
       </div>
     </div>
     <hr>
-    <div class="row myDiv" id="endpointDiv">
+    <div class="row myDiv endpointDiv" id="endpointDiv">
       <div class="col-md-6">
         <h2>Endpoints by Tag</h2>
         <h3>Description:</h3>
@@ -124,7 +127,7 @@
       <div class="col-md-6">
         <div class="row">
           <div class="col-md-9">
-            <input type="text" class="form-control" id="endpointText" onkeydown="if(event.keyCode == 13) document.getElementById('endpointButton').click();" placeholder="tag">
+            <input type="text" class="form-control myFormControl" id="endpointText" onkeydown="if(event.keyCode == 13) document.getElementById('endpointButton').click();" placeholder="tag">
           </div>
           <div class="col-md-3">
             <input type="button" class="btn btn-default myDocButton" id="endpointButton" onClick="getJSON(this);" value="Get Endpoints">
@@ -135,7 +138,7 @@
       </div>
     </div>
     <hr>
-    <div class="row myDiv" id="detailDiv">
+    <div class="row myDiv detailDiv" id="detailDiv">
       <div class="col-md-6">
         <h2>Endpoint Detail</h2>
         <h3>Description:</h3>
@@ -145,7 +148,7 @@
       <div class="col-md-6">
         <div class="row">
           <div class="col-md-9">
-            <input type="text" class="form-control" id="detailText" onkeydown="if(event.keyCode == 13) document.getElementById('detailButton').click();"placeholder="endpoint">
+            <input type="text" class="form-control myFormControl" id="detailText" onkeydown="if(event.keyCode == 13) document.getElementById('detailButton').click();"placeholder="endpoint">
           </div>
           <div class="col-md-3">
             <input type="button" class="btn btn-default myDocButton" id="detailButton" onClick="getJSON(this);" value="Get Detail">

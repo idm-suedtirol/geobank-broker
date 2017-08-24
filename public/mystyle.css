@@ -11,7 +11,7 @@
   margin-right: 16px
 }
 .bootstrap-tagsinput{
-  width: 334px;
+  width: 100%;
 }
 td{
   vertical-align: middle !important;
@@ -58,4 +58,27 @@ pre{
 	-mmoz-transition-duration: 200ms;
 	transition-property: background-color;
 	transition-duration: 200ms;
+}
+.filterDiv{
+  text-align:center;
+}
+.myStatusText{
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  display: inline-block;
+}
+
+@media ( max-width : 768px) {
+  .myTableDiv{
+    min-height: .01%;
+    overflow-x: auto;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    margin-bottom: 5vh;
+  }
+  .myFormControl{
+    margin-bottom:5vw;
+  }
+
 }

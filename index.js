@@ -16,7 +16,6 @@ http.createServer(function(req,res){
 
 		var myresult = 	db.selectTagsfromGeobankTable(callback);
 
-
 		function callback(data,err){
 
 			if(err)
@@ -32,14 +31,13 @@ http.createServer(function(req,res){
 				for(var i of testarray){
 					var obj = JSON.parse(i.tags);
 					for (var j of obj){
-						if(destarray.indexOf(j.tagname) === -1)
+						if(destarray.indexOf(j.tagname) === -1){
 							destarray.push(j.tagname);
+						}
 					}
 				}
 				res.end(JSON.stringify(destarray));
 			}
-
-
 		}
 
 	}else if(route.substring(0,3) === "tag"){
@@ -80,26 +78,26 @@ http.createServer(function(req,res){
 			{
 				res.end(JSON.stringify(data));
 			}
+		}
 	}
-}
 	/*else if(route != 'favicon.ico') {
 
-		var myresult = 	db.selectFromGeobankTable(route, callback);
+	var myresult = 	db.selectFromGeobankTable(route, callback);
 
-		function callback(data,err){
+	function callback(data,err){
 
-			if(err)
-			{
-				console.log(err);
-				res.end(JSON.stringify(err))
-			}
-			else
-		  	res.end(JSON.stringify(data));
-		}
+	if(err)
+	{
+	console.log(err);
+	res.end(JSON.stringify(err))
+}
+else
+res.end(JSON.stringify(data));
+}
 
-		//res.end(JSON.stringify(getDetail(route)));
+//res.end(JSON.stringify(getDetail(route)));
 
-	}*/
+}*/
 }).listen(8090);
 
 function getServices(){
