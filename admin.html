@@ -18,7 +18,7 @@
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
-  function fillForm(){
+  function fillFunction() {
     if (getParameterByName('id') != undefined){
       $.ajax({
 
@@ -37,10 +37,17 @@
             for(var i of x){
               content += i.tagname + ";";
             }
-            document.getElementById("tagname").value = content;
+            document.getElementById("tagsInputDiv").firstElementChild.firstElementChild.setAttribute("id", "specialId");
+            document.getElementById("tagsInputDiv").firstElementChild.firstElementChild.value= content.replace(/;/g, ",");
+            var e = jQuery.Event("keypress");
+            e.which = 13;
+            e.keyCode = 13;
+            $("#specialId").trigger(e);
             document.getElementById("url").value = data.data.url;
             document.getElementById("origin").value = data.data.origin;
             document.getElementById("dataFormats").value = data.data.dataFormats;
+            $("#tagsInputDiv > i").removeClass("glyphicon-ok");
+            document.getElementById("myLabel").parentElement.classList.remove("has-success");
           }
         },
         'error' : function(request,error)
@@ -80,6 +87,7 @@
       // },
       'success' : function(data) {
         var x = data;
+        var k = 0;
         //document.getElementById("listDiv").innerHTML += "<hr>"
         for(var i of x){
           var y = i.services.tag;
@@ -88,8 +96,13 @@
             content += j.tagname + "<br>";
           }
           content = content.substring(0, content.length-4);
-          document.getElementById("mytbody").innerHTML += "<tr><td class='text-center'>" + i.datatype +"</td><td class='text-center'><a href='" + i.services.doc + "'>" + i.services.doc + "</td><td class='text-center'>" + content + "</td><td class='text-center'><a href='" + i.services.url + "'>" + i.services.url + "</td><td class='text-center'>" + i.services.origin +
-          "</td><td class='text-center'>" + i.services.dataFormats +"</td><td class='text-center'><input type='button' value='Edit' class='btn btn-default myButton' onClick='reload("+ i.id +");'></td><td class='text-center'><input type='button' class='btn btn-default myButton align-middle' value='Delete' onClick='deleteFunction("+ i.id +");'></td></tr>";
+          if(i.id != getParameterByName('id'))
+          document.getElementById("mytbody").innerHTML += "<tr id=row"+ k +"><td class='text-center hidden-xs' id='firstTd'>" + i.datatype +"</td><td class='text-center hidden-xs'><a href='" + i.services.doc + "'>" + i.services.doc + "</a></td><td class='text-center hidden-xs'>" + content + "</td><td class='text-center hidden-xs'><a href='" + i.services.url + "'>" + i.services.url + "</a></td><td class='text-center hidden-xs'>" + i.services.origin +
+          "</td><td class='text-center hidden-xs'>" + i.services.dataFormats +"</td><td class='text-center hidden-xs'><input type='button' value='Edit' class='btn btn-default myButton' onClick='reload("+ i.id +");'></td><td class='text-center hidden-xs'><input type='button' class='btn btn-default myButton align-middle' value='Delete' onClick='deleteFunction("+ i.id +");'></td>"+
+          "<th class='text-center visible-xs myTh'>" + i.datatype + "</th><td class='text-center visible-xs'><a href='" + i.services.doc + "'>" + i.services.doc + "</a><br><hr><a href=''" + i.services.url + "'>" + i.services.url + "</a><br><hr>" + i.services.origin + "<br>" + i.services.dataFormats +"</td><td class='text-center visible-xs'>" + content
+          + "</td><td class='text-center visible-xs'>" + "<input type='button' value='Edit' class='btn btn-default myButton' onClick='reload("+ i.id +");'><br><input type='button' class='btn btn-default myButton align-middle' value='Delete'"
+          +"onClick='deleteFunction("+ i.id +");'></td></tr>";
+          k++;
         }
       },
       'error' : function(request,error)
@@ -100,23 +113,36 @@
   }
 
   function filterFunction(){
-    var input, filter, tbody, tr, td, i;
+    var input, filter, tbody, tr, td, i, value;
     input = document.getElementById("myFilter");
     filter = input.value.toUpperCase();
     tbody = document.getElementById("mytbody");
     tr = tbody.getElementsByTagName("tr");
+    $('#firstTd').css('display') === 'none'? value = 9 : value = 2
     for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[2];
+      td = tr[i].getElementsByTagName("td")[value];
       if (td) {
         if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
+          var x = tr[i];
         }
       }
     }
+    var table = document.getElementById("myTable");
+    var k = 0;
+    for (var j = 0, row; row = table.rows[j]; j++) {
+      if (!(row.style.display === "none")) {
+        if (k % 2) {
+          row.style.backgroundColor = "#F9F9F9";
+        } else {
+          row.style.backgroundColor = "#FFFFFF";
+        }
+        k++;
+      }
+    }
   }
-
   $(document).ready(function () {
     if(getParameterByName('status') === "update"){
       document.getElementById("statusText").innerHTML = "Updated successfully";
@@ -149,7 +175,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body onLoad="fillForm();addList()">
+<body onLoad="fillFunction();addList()">
   <div class="container">
     <div class="row">
       <div class="col-md-5 col-xs-12 col-centered">
@@ -168,8 +194,8 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label col-md-3" for="tagname">Tagname:</label>
-            <div class="col-md-9">
+            <label class="control-label col-md-3" id="myLabel" for="tagname">Tagname:</label>
+            <div class="col-md-9" id="tagsInputDiv">
               <input type="text" class="form-control col-md-10" id="tagname" name="tagname" data-role="tagsinput" required>
             </div>
           </div>
@@ -207,14 +233,18 @@
         <table class="table table-striped" id="myTable">
           <thead>
             <tr>
-              <th class="text-center">Endpoint</th>
-              <th class="text-center">Doc</th>
-              <th class="text-center">Tagname</th>
-              <th class="text-center">Url</th>
-              <th class="text-center">Origin</th>
-              <th class="text-center">DataFormats</th>
-              <th class="text-center">Edit</th>
-              <th class="text-center">Delete</th>
+              <th class="text-center hidden-xs">Endpoint</th>
+              <th class="text-center hidden-xs">Doc</th>
+              <th class="text-center hidden-xs">Tags</th>
+              <th class="text-center hidden-xs">Url</th>
+              <th class="text-center hidden-xs">Origin</th>
+              <th class="text-center hidden-xs">DataFormats</th>
+              <th class="text-center hidden-xs">Edit</th>
+              <th class="text-center hidden-xs">Delete</th>
+              <th class="text-center visible-xs">Endpoint</th>
+              <th class="text-center visible-xs">Data</th>
+              <th class="text-center visible-xs">Tags</th>
+              <th class="text-center visible-xs">Action</th>
             </tr>
           </thead>
           <tbody id="mytbody">
