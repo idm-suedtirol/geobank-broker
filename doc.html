@@ -12,6 +12,7 @@
     document.getElementById("endpointText").value = element.innerHTML.replace(/"/g, '');
     document.getElementById("endpointButton").onclick.apply(document.getElementById("endpointButton"));
     document.getElementById("endpointDiv").style.backgroundColor = "darkorange";
+    window.location.hash = "";
     window.location.hash = "#endpointDiv";
     setTimeout("colorChange( document.getElementById('endpointDiv'), 'white')", 1000);
   }
@@ -19,6 +20,7 @@
     document.getElementById("detailText").value = element.innerHTML.replace(/"/g, '');
     document.getElementById("detailButton").onclick.apply(document.getElementById("detailButton"));
     document.getElementById("detailDiv").style.backgroundColor = "darkorange";
+    window.location.hash = "";
     window.location.hash = "#detailDiv";
     setTimeout("colorChange( document.getElementById('detailDiv'), 'white')", 1000);
   }
@@ -138,7 +140,7 @@
       </div>
     </div>
     <hr>
-    <div class="row myDiv detailDiv" id="detailDiv">
+    <div class="row myDiv" id="detailDiv">
       <div class="col-md-6">
         <h2>Endpoint Detail</h2>
         <h3>Description:</h3>
