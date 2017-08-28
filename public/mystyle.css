@@ -53,11 +53,11 @@ pre{
 }
 .myDiv{
   -webkit-transition-property: background-color;
-	-webkit-transition-duration: 200ms;
-	-moz-transition-property: background-color;
-	-mmoz-transition-duration: 200ms;
-	transition-property: background-color;
-	transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  -moz-transition-property: background-color;
+  -mmoz-transition-duration: 200ms;
+  transition-property: background-color;
+  transition-duration: 200ms;
 }
 .filterDiv{
   text-align:center;
@@ -83,5 +83,35 @@ pre{
   }
   .myFormControl{
     margin-bottom:5vw;
+  }
+  .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+    padding: 2px;
+  }
+
+  .myButton{
+    margin-bottom: 2vh;
+    height:5vh;
+    width: 15vw;
+    font-size: 3vw;
+  }
+  .myTable{
+    font-size: 3vw;
+  }
+  hr{
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  .col-centered{
+    margin: 20px auto;
+  }
+}
+@media ( max-width : 768px) and (orientation:landscape) {
+  .myButton{
+    height:5vw;
+    width:15vh;
+    font-size: 3vh;
+  }
+  .myTable{
+    font-size: 3vh;
   }
 }
