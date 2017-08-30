@@ -20,6 +20,7 @@ describe('App', function(){
     request.get({url: baseUrl + '/tag/' + tagname}, function(error, response, body){
       endpointname = myRandom(body).endpoint;
       expect(response.statusCode).equal(200);
+      expect(body).not.equal("nothing");
       expect(endpointname).not.empty;
       console.log(endpointname);
       done();
