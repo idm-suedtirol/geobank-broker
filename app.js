@@ -2,14 +2,12 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var db = require('./models/database');
-
+var gd = require('./models/googledocs');
+const logger = require('winston');
+var schedule = require('node-schedule');
 var urlencodedParser = bodyParser.urlencoded({ extended:false })
 
 app.use(express.static(__dirname + '/public'));
-
-//For Bootstrap reference
-app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
-app.use('/bootstrap/tags', express.static(__dirname + '/node_modules/bootstrap-tagsinput/dist/'));
 
 app.get('/admin', function (req, res) {
   // console.log(req.query.id);
@@ -44,11 +42,10 @@ app.get('/api/list', function(req, res){
 })
 
 app.get('/api/delete', function(req, res){
-  console.log(req.query.id);
   var obj = db.deleteFromTable(req.query.id, callback);
   function callback(data, err){
     if(err){
-      console.log(err);
+      log.error(err);
       res.end(JSON.stringify(err));
     }else{
       res.writeHead(301,
@@ -58,7 +55,7 @@ app.get('/api/delete', function(req, res){
     }
   })
 
-  app.post('/api/postdata', urlencodedParser, function(req, res){
+app.post('/api/postdata', urlencodedParser, function(req, res){
     var temp = req.body.tagname.replace(/,/g, ";");
     var x = temp.split(";")
     var cont = [];
@@ -90,79 +87,78 @@ app.get('/api/delete', function(req, res){
           res.writeHead(301,
             {Location: 'http://localhost:8090/admin?status=insert'});
             res.end();
-        }else{
-        res.writeHead(301,
-          {Location: 'http://localhost:8090/admin?status=update'});
-          res.end();
-        }
-        }
-      }
-    })
-
-    app.get('/tag', function(req, res){
-      var myresult = 	db.selectTagsfromGeobankTable(callback);
-
-      function callback(data,err){
-
-        if(err)
-        {
-          console.log(err);
-          res.end(JSON.stringify(err))
-        }
-        else
-        {
-          var testarray = data;
-          var destarray = [];
-
-          for(var i of testarray){
-            var obj = JSON.parse(i.tags);
-            for (var j of obj){
-              if(destarray.indexOf(j.tagname) === -1){
-              destarray.push(j.tagname);
-            }
+          }else{
+            res.writeHead(301,
+              {Location: 'http://localhost:8090/admin?status=update'});
+              res.end();
             }
           }
-          res.end(JSON.stringify(destarray, undefined, 2));
         }
+      })
+
+app.get('/tag', function(req, res){
+  db.selectTags(elaborateData);
+  function elaborateData(data,err){
+    if(err){
+      res.end(JSON.stringify(err))
+    }else{
+      var map={}
+      for (i in data){
+        var tags =JSON.parse(data[i].tags);
+        for (j in tags)
+        map[tags[j]]=1;
       }
-    })
+      res.end(JSON.stringify(Object.keys(map).sort()));
+    }
+  }
+});
+app.get('/endpoint', function(req, res){
+  logger.debug(req.params.tag);
+  var myresult = db.getEndpoints(req.params.tag, callback);
+  function callback(data, err){
+    if(err){
+      logger.error(err);
+      res.end(JSON.stringify(err))
+    }else{
+      res.end(JSON.stringify(data.sort()));
+    }
+  }
+});
+app.get('/endpoint/:tag', function(req, res){
+  logger.debug(req.params.tag);
+  var myresult = db.getEndpoints(req.params.tag, callback);
+  function callback(data, err){
+    if(err){
+      console.log(err);
+      res.end(JSON.stringify(err))
+    }else{
+      res.end(JSON.stringify(data.sort()));
+    }
+  }
+});
 
-    app.get('/tag/:param', function(req, res){
-      var myresult = db.selectIdentifiersFromTagsfromGeobankTable(req.params.param, callback);
-      function callback(data, err){
-        if(err)
-        {
-          console.log(err);
-          res.end(JSON.stringify(err))
-        }
-        else
-        {
-          res.end(JSON.stringify(data, undefined, 2));
-        }
-      }
-    })
+app.get('/endpoint/:endpoint/detail', function(req, res){
+  var name = req.params.endpoint
+  logger.debug(name);
+  var myresult = db.getService(name, callback);
+  function callback(data, err){
+    if(err){
+      res.end(JSON.stringify(err))
+    }else{
+      res.end(JSON.stringify(data, undefined, 2));
+    }
+  }
+})
 
-    app.get('/endpoint/:param', function(req, res){
-      var myresult = db.selectFromGeobankTable(req.params.param, callback);
-      function callback(data, err){
-        if(err)
-        {
-          console.log(err);
-          res.end(JSON.stringify(err))
-        }
-        else
-        {
-          res.end(JSON.stringify(data, undefined, 2));
-        }
-      }
-    })
+app.get('/', function(req, res){
+  res.sendFile(__dirname + "/" + "doc.html");
+})
 
-    app.get('/', function(req, res){
-      res.sendFile(__dirname + "/" + "doc.html");
-    })
-
-    var server = app.listen(8090, function () {
-      var host = server.address().address
-      var port = server.address().port
-      console.log("Example app listening at http://%s:%s", host, port)
-    })
+var server = app.listen(8090, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+  var job = new schedule.scheduleJob('*/10 * * * * *', function(){
+     gd.requestData()
+  });
+  logger.info("Example app listening at http://%s:%s", host, port)
+})

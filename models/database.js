@@ -1,62 +1,16 @@
+const logger = require('winston')
+logger.level='info';
 const { Pool, Client } = require('pg');
-//const connectionString = process.env.DATABASE_URL || 'postgres://postgres:testhallo@localhost:5432/geobank';
-
+var format = require('pg-format');
 const pool = new Pool({
-  user: 'hannes',
+  user: 'patrick',
   host: 'localhost',
   database: 'geobank',
   password: '',
   port: 5432,
 });
 
-//TODO
-//createGeobankTable();
-//dropGeobankTable();
-//fillGeobankTable();
-//updateGeobankTable();
-//selectFromGeobankTable('meteo');
-//selectedtest('meteo');
-
-//Create Object Array for Table
-function getGeobankObjectArray(){
-  var mytypes = [];
-  // mytypes.push({ identifier:'meteogb', data: '{ "origin":"Siag", "url":"http://service.suedtirol.info/api/Weather", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["meteo"] }'});
-  // mytypes.push({ identifier:'meteointegreen', data: '{ "origin":"province BZ", "url":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd", "doc":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd","dataFormats":"json", "tag":["meteo"] }'});
-  // mytypes.push({ identifier:'accommodation', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Accommodation", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["accommodation","tourism"] }' });
-  // mytypes.push({ identifier:'event', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Eventi", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["events","tourism"] }' });
-  // mytypes.push({ identifier:'gastronomy', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Gastronomy", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["gastronomy"] }' });
-  // mytypes.push({ identifier:'activity', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Activity" , "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["activity"] }' });
-  // mytypes.push({ identifier:'poi', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Poi" , "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":["poi"] }' });
-  // mytypes.push({ identifier:'parking', data: '{ "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd","dataFormats":"json", "tag":["integreen","parking"] }' });
-  // mytypes.push({ identifier:'environment', data: '{ "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd","dataFormats":"json", "tag":["integreen","parking"] }' });
-  // mytypes.push({ identifier:'traffic_btfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd","dataFormats":"json", "tag":["integreen","traffic"] }' });
-  // mytypes.push({ identifier:'traffic_linkfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd","dataFormats":"json", "tag":["integreen","traffic"] }' });
-  // mytypes.push({ identifier:'traffic_streetfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd","dataFormats":"json", "tag":["integreen","traffic"] }' });
-  // mytypes.push({ identifier:'traffic_trafficfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd","dataFormats":"json", "tag":["integreen","traffic"] }' });
-
-
-//brings a net
-  mytypes.push({ identifier:'meteogb', data: '{ "origin":"Siag", "url":"http://service.suedtirol.info/api/Weather", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"meteo" }] }'});
-  mytypes.push({ identifier:'meteointegreen', data: '{ "origin":"province BZ", "url":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd", "doc":"http://ipchannels.integreen-life.bz.it/MeteoFrontEnd","dataFormats":"json", "tag":[{ "tagname":"meteo" }] }'});
-  mytypes.push({ identifier:'accommodation', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Accommodation", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"accommodation" },{ "tagname":"tourism" }] }' });
-  mytypes.push({ identifier:'event', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Eventi", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"events" },{ "tagname":"tourism" }] }' });
-  mytypes.push({ identifier:'gastronomy', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Gastronomy", "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"gastronomy" }] }' });
-  mytypes.push({ identifier:'activity', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Activity" , "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"activity" }] }' });
-  mytypes.push({ identifier:'poi', data: '{ "origin":"LTS", "url":"http://service.suedtirol.info/api/Poi" , "doc":"http://service.suedtirol.info/help","dataFormats":"json", "tag":[{ "tagname":"poi" }] }' });
-  mytypes.push({ identifier:'parking', data: '{ "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/parkingFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"parking" }] }' });
-  mytypes.push({ identifier:'environment', data: '{ "origin":"Province BZ", "url":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/EnvironmentFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"parking" }] }' });
-  mytypes.push({ identifier:'traffic_btfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/BluetoothFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"traffic" }] }' });
-  mytypes.push({ identifier:'traffic_linkfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/LinkFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"traffic" }] }' });
-  mytypes.push({ identifier:'traffic_streetfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/StreetFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"traffic" }] }' });
-  mytypes.push({ identifier:'traffic_trafficfrontend', data: '{ "origin":"IDM-Suedtirol", "url":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd" , "doc":"http://ipchannels.integreen-life.bz.it/TrafficFrontEnd","dataFormats":"json", "tag":[{ "tagname":"integreen" },{ "tagname":"traffic" }] }' });
-
-
-  return mytypes;
-};
-
-
-//CREATE Table
-function createGeobankTable(){
+function setup(){
   pool.query(
       'CREATE TABLE geobank(id SERIAL PRIMARY KEY, identifier VARCHAR(50) UNIQUE, data JSONB)' , (err, res) => {
       console.log(err, res);
@@ -64,45 +18,30 @@ function createGeobankTable(){
     });
 };
 
-
-
-//DROP Table
-function dropGeobankTable(){
-  pool.query(
-      'DROP Table geobank' , (err, res) => {
-      console.log(err, res);
-      pool.end();
-    });
-};
-
-//INSERT INTO TABLE
-function fillGeobankTable(){
-
-  var arr = getGeobankObjectArray();
-
-  arr.forEach(function(value){
-    console.log("Inserting:" + value.identifier);
-    pool.query(
-      //'INSERT INTO geobank (identifier,data) VALUES(\'' + value.identifier + '\',\'' + value.data + '\')' , (err, res) => {
-      'INSERT INTO geobank (identifier,data) VALUES($1,$2)', [ value.identifier, value.data] , (err, res) => {
-        console.log(err, res);
-    });
+function batchInsert(arr){
+  return new Promise(function(resolve,reject){
+  	var insertQuerryString = format('INSERT INTO geobank (identifier,data) VALUES %L', arr);
+    logger.debug("execute query: "+insertQuerryString);
+	  pool.query(insertQuerryString,function(err,res){
+        if (err)
+          logger.debug("Query failed: "+err);
+		    resolve(res);
+  	  });
   });
-
-  //tuater vorher schun zua
-  //pool.end();
 };
 
-exports.insertIntoGeobankTable = function (identifier, data, callback){
+exports.insert = function (identifier, data, callback){
     pool.query(
       'INSERT INTO geobank (identifier,data) VALUES($1,$2)', [ identifier, data] , (err, res) => {
         if (err) {
-            console.log(err);
-            callback("failure inserting");
+            logger.error(err);
+	    if (callback)
+	    	callback("failure inserting");
           }
         else{
           //console.log(res);
-            callback("success inserting");
+	    if (callback)
+            	callback("success inserting");
         }
   });
 }
@@ -165,38 +104,20 @@ function updateGeobankTable(){
   pool.end();
 };
 
-//SELECT FROM TABLE
-exports.selectFromGeobankTable = function(identifier, callback){
-  console.log("Selecting:" + identifier);
-
-   pool.query(
-    'SELECT data FROM geobank WHERE identifier = $1', [ identifier ] , (err, res) => {
-      if (err) {
-          callback(null, err);
-        }
-      if(res.rows.length > 0)
-           callback(res.rows[0].data);
-      else {
-        callback(null, "nothing");
-      }
-  });
-
-  //pool.end();
-
-  // pool.connect((err, client, release) => {
-  //   if (err) {
-  //     return console.log('Error acquiring client', err.stack)
-  //   }
-  //   client.query('SELECT data FROM geobank WHERE identifier = $1', [ identifier ], (err, result) => {
-  //     release();
-  //     if (err) {
-  //       return console.log('Error executing query', err.stack);
-  //     }
-  //     //console.log(result.rows[0].data);
-  //
-  //     callback(result.rows[0].data);
-  //   });
-  // });
+exports.getService = function(identifier, callback){
+  logger.debug(identifier);
+  var query = {
+    name: 'fetch-webservice',
+    text: 'SELECT data FROM geobank WHERE identifier = $1',
+    values: [identifier]
+  }
+   pool.query(query, (err, res) => {
+      if (err){
+        logger.error("querry failed: "+err);
+        callback(null, err);
+      }else
+          callback(res.rows.length>0?res.rows[0].data:res.rows);
+    });
 };
 
 //SELECT FROM TABLE
@@ -220,44 +141,81 @@ exports.selectListfromGeobankTable = function(callback){
   //pool.end();
 };
 
-
-
-//SELECT Tags FROM TABLE
-exports.selectTagsfromGeobankTable = function(callback){
-
-  console.log("Selecting TAGS");
-
+exports.selectTags = function(callback){
    pool.query(
-    "SELECT DISTINCT data->>'tag' as tags FROM geobank" , (err, res) => {
-      if (err) {
-          callback(null, err);
-        }
-      if(res.rows.length > 0)
-           callback(res.rows);
-      else {
-        callback(null, "nothing");
-      }
+    "SELECT DISTINCT data->>'tags' as tags FROM geobank" , (err, res) => {
+      if (err)
+        callback(null, err);
+      else
+        callback(res.rows);
   });
-
-  //pool.end();
 };
 
-//SELECT Identifiers from Tags FROM TABLE
-exports.selectIdentifiersFromTagsfromGeobankTable = function(tag,callback){
+exports.getEndpoints = function(tag,callback){
+  var query = {
+    text: '',
+    values: [],
+    rowMode: 'array'
+  }
+  if (tag){
 
-  console.log("Selecting Identifiers");
-
-   pool.query(
-    "select identifier as endpoint from geobank where data @> '{ \"tag\" : [{ \"tagname\" :\""+ tag +"\"}] }';" ,(err, res) => {
+    query.text= "select identifier from geobank where data @> \'{ \"tags\" : [ \"" +tag+"\" ] }\';";
+    //query.values.push('\"'+tag+'\"'); //prepared statement not working with jsonb
+  }
+  else
+      query.text= "select identifier from geobank";
+   logger.debug(query);
+   pool.query(query,(err, res) => {
       if (err) {
           callback(null, err);
+        }else{
+          var data = res.rows;
+          var stringArray=[];
+          for (i in data){
+            stringArray.push(data[i][0]);
+          }
+          callback(stringArray);
         }
-      if(res.rows.length > 0)
-           callback(res.rows);
-      else {
-        callback(null, "nothing");
-      }
   });
-
-  //pool.end();
 };
+
+//added for google docs integration
+exports.syncDataSets = function(rows){
+  logger.info("start");
+	var parsedData = [];
+  var headers = rows[0];
+  rows.shift();
+  logger.debug("Headers: "+headers);
+  logger.debug("Data: " +rows);
+	for (i in rows){
+    var row = rows[i];
+    var jsonString="{";
+    for (colI in headers){
+      if (colI == 0 || !headers[colI] || !row[colI])
+        continue;
+      if (colI > 1)
+        jsonString += ","
+      var key = headers[colI].toLowerCase();
+      var value = '"'+row[colI]+'"';
+      if (key==="tags")
+        value = JSON.stringify(row[colI].split(', ')); //parseTags
+      jsonString += '"'+key+'":'+value;
+    }
+    jsonString += "}";
+    logger.debug("jsonString:" +jsonString);
+		parsedData.push([row[0],jsonString]);
+	}
+	clearDataSets().then(batchInsert(parsedData));
+}
+function clearDataSets(){
+  return new Promise(function(success,error){
+	pool.query('DELETE FROM geobank', [ ], (err, res) => {
+      		if(err){
+        		logger.error(err);
+			error(err);
+      		}else{
+			success(res);
+      		}
+    	});
+    });
+  }
