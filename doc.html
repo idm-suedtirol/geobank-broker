@@ -1,8 +1,8 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-latest.js"></script>
-  <script src="bootstrap/js/bootstrap.min.js"></script>
-  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="mystyle.css" rel="stylesheet">
   <script type="text/javascript">
   function colorChange(element, info){
@@ -70,7 +70,7 @@
       });
     }else if(element.id === "endpointButton"){
       $.ajax({
-        'url' : 'http://localhost:8090/tag/'+ document.getElementById("endpointText").value,
+        'url' : 'http://localhost:8090/endpoint/'+ document.getElementById("endpointText").value,
         'type' : 'GET',
         'success' : function(data) {
           document.getElementById("endpointsPre").innerHTML = colorJSON(data, "endpoint");
@@ -82,7 +82,7 @@
       });
     }else if(element.id === "detailButton"){
       $.ajax({
-        'url' : 'http://localhost:8090/endpoint/'+ document.getElementById("detailText").value,
+        'url' : 'http://localhost:8090/endpoint/'+ document.getElementById("detailText").value+'/detail',
         'type' : 'GET',
         'success' : function(data) {
           document.getElementById("detailsPre").innerHTML = colorJSON(data, "detail");
