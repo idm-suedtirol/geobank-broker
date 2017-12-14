@@ -181,28 +181,25 @@ exports.getEndpoints = function(tag,callback){
 
 //added for google docs integration
 exports.syncDataSets = function(rows){
-  logger.info("start");
 	var parsedData = [];
   var headers = rows[0];
   rows.shift();
   logger.debug("Headers: "+headers);
   logger.debug("Data: " +rows);
 	for (i in rows){
+    var dataObject = {};
     var row = rows[i];
-    var jsonString="{";
     for (colI in headers){
       if (colI == 0 || !headers[colI] || !row[colI])
         continue;
-      if (colI > 1)
-        jsonString += ","
       var key = headers[colI].toLowerCase();
-      var value = '"'+row[colI]+'"';
+      var value = row[colI];
       if (key==="tags")
-        value = JSON.stringify(row[colI].split(', ')); //parseTags
-      jsonString += '"'+key+'":'+value;
+        dataObject['tags'] = row[colI].split(', '); //parseTags
+      else
+        dataObject[key] = value;
     }
-    jsonString += "}";
-    logger.debug("jsonString:" +jsonString);
+    var jsonString = JSON.stringify(dataObject);
 		parsedData.push([row[0],jsonString]);
 	}
 	clearDataSets().then(batchInsert(parsedData));
