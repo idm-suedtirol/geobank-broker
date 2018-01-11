@@ -113,8 +113,11 @@ app.get('/tag', function(req, res){
   }
 });
 app.get('/endpoint', function(req, res){
-  logger.debug(req.params.tag);
-  var myresult = db.getEndpoints(req.params.tag, callback);
+  //logger.debug(req.params.tag);
+  logger.debug(req.query.tag);
+  console.log(req.query.tag);
+  //var myresult = db.getEndpoints(req.params.tag, callback);
+  var myresult = db.getEndpoints(req.query.tag, callback);
   function callback(data, err){
     if(err){
       logger.error(err);
@@ -124,20 +127,20 @@ app.get('/endpoint', function(req, res){
     }
   }
 });
-app.get('/endpoint/:tag', function(req, res){
-  logger.debug(req.params.tag);
-  var myresult = db.getEndpoints(req.params.tag, callback);
-  function callback(data, err){
-    if(err){
-      console.log(err);
-      res.end(JSON.stringify(err))
-    }else{
-      res.end(JSON.stringify(data.sort()));
-    }
-  }
-});
+// app.get('/endpoint:tag', function(req, res){
+//   logger.debug(req.params.tag);
+//   var myresult = db.getEndpoints(req.params.tag, callback);
+//   function callback(data, err){
+//     if(err){
+//       console.log(err);
+//       res.end(JSON.stringify(err))
+//     }else{
+//       res.end(JSON.stringify(data.sort()));
+//     }
+//   }
+// });
 
-app.get('/endpoint/:endpoint/detail', function(req, res){
+app.get('/endpoint/:endpoint', function(req, res){
   var name = req.params.endpoint
   logger.debug(name);
   var myresult = db.getService(name, callback);

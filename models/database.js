@@ -3,10 +3,10 @@ logger.level='info';
 const { Pool, Client } = require('pg');
 var format = require('pg-format');
 const pool = new Pool({
-  user: 'patrick',
+  user: 'postgres',
   host: 'localhost',
   database: 'geobank',
-  password: '',
+  password: 'testhallo',
   port: 5432,
 });
 
