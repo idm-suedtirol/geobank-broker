@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var cors = require('cors')
 var bodyParser = require('body-parser');
 var db = require('./models/database');
 var gd = require('./models/googledocs');
@@ -8,6 +9,15 @@ var schedule = require('node-schedule');
 var urlencodedParser = bodyParser.urlencoded({ extended:false })
 
 app.use(express.static(__dirname + '/public'));
+
+/*
+ * We enable CORS for all origins (See https://github.com/expressjs/cors#cors).
+ * This could be a security issue as described in the following Web Security Blog:
+ * http://blog.portswigger.net/2016/10/exploiting-cors-misconfigurations-for.html
+ * However, for now we do not have sensible data, and thus the default CORS config
+ * is good enough.
+ */
+app.use(cors());
 
 app.get('/admin', function (req, res) {
   // console.log(req.query.id);

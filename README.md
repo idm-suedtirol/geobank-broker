@@ -17,4 +17,4 @@
 - Read https://github.com/idm-suedtirol/doc-howto/wiki/Postgres.
 - Change the configuration of PG to the credentials seen in `models/database.js`.
 - Create a table with `psql`: `CREATE TABLE geobank(id SERIAL PRIMARY KEY, identifier VARCHAR(50) UNIQUE, data JSONB);`
-- Restart the PostgreSQL service 
+- Restart the PostgreSQL service if you changed any configuration.
