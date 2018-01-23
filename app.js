@@ -16,6 +16,13 @@ app.use(express.static(__dirname + '/public'));
  * http://blog.portswigger.net/2016/10/exploiting-cors-misconfigurations-for.html
  * However, for now we do not have sensible data, and thus the default CORS config
  * is good enough.
+ * Default configuration is:
+ *     {
+ *         "origin": "*",
+ *         "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+ *         "preflightContinue": false,
+ *         "optionsSuccessStatus": 204
+ *     }
  */
 app.use(cors());
 
