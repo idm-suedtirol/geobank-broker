@@ -3,10 +3,10 @@ logger.level='info';
 const { Pool, Client } = require('pg');
 var format = require('pg-format');
 const pool = new Pool({
-  user: 'xxx',
+  user: 'postgres',
   host: 'localhost',
   database: 'geobank',
-  password: '',
+  password: 'testhallo',
   port: 5432,
 });
 
@@ -163,7 +163,7 @@ exports.getEndpoints = function(tag,callback){
     //query.values.push('\"'+tag+'\"'); //prepared statement not working with jsonb
   }
   else
-      query.text= "select identifier from geobank";
+      query.text= "select data from geobank";
    logger.debug(query);
    pool.query(query,(err, res) => {
       if (err) {
@@ -262,9 +262,9 @@ exports.syncDataSetsLD = function(rows){
 		  "spatial": {},
 		  "dataset": dataSets
   };
-    
+
   var jsonString = JSON.stringify(dataObject);
-  parsedData.push([row[0],jsonString]);
+  parsedData.push(["catalog",jsonString]);
   clearDataSets().then(batchInsert(parsedData));
 }
 
