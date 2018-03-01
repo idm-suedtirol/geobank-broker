@@ -3,10 +3,10 @@ logger.level='info';
 const { Pool, Client } = require('pg');
 var format = require('pg-format');
 const pool = new Pool({
-  user: 'postgres',
+  user: 'xxx',
   host: 'localhost',
   database: 'geobank',
-  password: 'testhallo',
+  password: '',
   port: 5432,
 });
 
@@ -204,6 +204,71 @@ exports.syncDataSets = function(rows){
 	}
 	clearDataSets().then(batchInsert(parsedData));
 }
+
+//added for google docs integration
+exports.syncDataSetsLD = function(rows){
+  var parsedData = [];
+  var headers = rows[0];
+  rows.shift();
+  logger.debug("Headers: "+headers);
+  logger.debug("Data: " +rows);
+  var dataSets = [];
+  for (rowID in rows) {
+	  var row = rows[rowID];
+	  var dataset = {
+  			"@id": row[0],
+			"@type":"Dataset",
+			"title":row[0],
+			"contactPoint":{
+				"@context": "http://www.w3.org/2006/vcard/ns",
+	  			"@type": "Individual",
+	  			"fn": row[7],
+	  			"hasEmail": "mailto:"+row[7]
+			},
+			"keyword": row[10].split(", "),
+			"landingPage": row[4],
+			"distribution":[{
+				"title": "WEB API",
+				"description": "By " + row[5] + ": " + row[11],
+				"@type":"Distribution",
+				"accessUrl": row[1],
+				"format": row[3],
+			}]
+		};
+	  dataSets.push(dataset);
+  }
+  var dataObject = {
+		  "@id":"http://opendatahub.bz.it/catalog",
+		  "@context": {
+			  "dcat":"http://www.w3.org/ns/dcat#",
+			  "@vocab":"http://purl.org/dc/terms/",
+			  "foaf":"http://xmlns.com/foaf/0.1/",
+			  "homepage":"foaf:homepage",
+			  "Catalog":"dcat:Catalog",
+			  "Dataset":"dcat:Dataset",
+			  "Distribution":"dcat:Distribution",
+			  "distribution":"dcat:distribution",
+			  "dataset":"dcat:dataset",
+			  "keyword":"dcat:keyword",
+			  "contactPoint":"dcat:contactPoint",
+			  "accessUrl":{"@id":"dcat:accessUrl","@type":"@id"},
+			  "downloadURL":{"@id":"dcat:downloadURL","@type":"@id"},
+			  "landingPage":{"@id":"dcat:landingPage","@type":"@id"},
+
+		  },
+		  "@type": "Catalog",
+		  "title": "OpenDataHub",
+		  "homepage": "https://opendatahub.bz.it",
+		  "spatial": {},
+		  "dataset": dataSets
+  };
+    
+  var jsonString = JSON.stringify(dataObject);
+  parsedData.push([row[0],jsonString]);
+  clearDataSets().then(batchInsert(parsedData));
+}
+
+
 function clearDataSets(){
   return new Promise(function(success,error){
 	pool.query('DELETE FROM geobank', [ ], (err, res) => {

@@ -103,7 +103,7 @@ function getRows(auth) {
     if (rows.length == 0) {
       console.log('No data found.');
     } else {
-	     db.syncDataSets(rows);
+	     db.syncDataSetsLD(rows);
     }
   });
 }
