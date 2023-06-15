@@ -238,7 +238,7 @@ exports.syncDataSetsLD = function(rows){
 	  dataSets.push(dataset);
   }
   var dataObject = {
-		  "@id":"http://opendatahub.bz.it/catalog",
+		  "@id":"http://opendatahub.com/catalog",
 		  "@context": {
 			  "dcat":"http://www.w3.org/ns/dcat#",
 			  "@vocab":"http://purl.org/dc/terms/",
@@ -258,7 +258,7 @@ exports.syncDataSetsLD = function(rows){
 		  },
 		  "@type": "Catalog",
 		  "title": "OpenDataHub",
-		  "homepage": "https://opendatahub.bz.it",
+		  "homepage": "https://opendatahub.com",
 		  "spatial": {},
 		  "dataset": dataSets
   };
